@@ -6,7 +6,7 @@ A C cross-compiler that produces IBM System/370 assembler source from C code. Bu
 
 c2asm370 is a fork of [gccmvs](https://gccmvs.sourceforge.net) by Paul Edwards. It was created by Michael Dean Rayborn (Mike Rayborn), who simplified the GCC 3.2.3 source tree to focus solely on generating assembler files from C source code.
 
-Mike Rayborn has since retired from active development. With his agreement, [MVSLOVERS](https://github.com/mvslovers) has taken over the project to preserve and continue its development.
+Mike Rayborn has since retired from active development. With his agreement, the [mvslovers](https://github.com/mvslovers) community has taken over the project to preserve and continue its development.
 
 ## What It Does
 
