@@ -444,7 +444,7 @@ store_bit_field (str_rtx, bitsize, bitnum, fieldmode, value, total_size)
 	    abort ();
 	}
 
-      emit_insn (GEN_FCN (icode)
+      emit_insn (GEN_FCN2 (icode)
 		 (gen_rtx_SUBREG (fieldmode, op0,
 				  (bitnum % BITS_PER_WORD) / BITS_PER_UNIT
 				  + (offset * UNITS_PER_WORD)),
@@ -4411,7 +4411,7 @@ emit_store_flag (target, code, op0, op1, mode, unsignedp, normalizep)
 	  || ! (*pred) (subtarget, compare_mode))
 	subtarget = gen_reg_rtx (compare_mode);
 
-      pattern = GEN_FCN (icode) (subtarget);
+      pattern = GEN_FCN1 (icode) (subtarget);
       if (pattern)
 	{
 	  emit_insn (pattern);

@@ -51,10 +51,20 @@ typedef struct optab
    the body of that kind of insn.  */
 #define GEN_FCN(CODE) (*insn_data[(int) (CODE)].genfun)
 
-/* Allow for compilers that pass parameters in registers */
-#define GEN_FN2(CODE) \
-(*((struct rtx_def *(*) PARAMS ((struct rtx_def *, struct rtx_def *)))\
-(insn_data[(int) (CODE)].genfun)))
+/* On ARM64 (and other platforms where varargs calling convention differs
+   from regular), we must cast GEN_FCN to the correct function pointer type.
+   The varargs prototype rtx (*)(rtx, ...) causes arguments after the first
+   to be passed on the stack instead of in registers.  */
+#define GEN_FCN1(CODE) \
+  (((rtx (*)(rtx))(insn_data[(int)(CODE)].genfun)))
+#define GEN_FCN2(CODE) \
+  (((rtx (*)(rtx, rtx))(insn_data[(int)(CODE)].genfun)))
+#define GEN_FCN3(CODE) \
+  (((rtx (*)(rtx, rtx, rtx))(insn_data[(int)(CODE)].genfun)))
+#define GEN_FCN4(CODE) \
+  (((rtx (*)(rtx, rtx, rtx, rtx))(insn_data[(int)(CODE)].genfun)))
+#define GEN_FCN5(CODE) \
+  (((rtx (*)(rtx, rtx, rtx, rtx, rtx))(insn_data[(int)(CODE)].genfun)))
 
 /* Enumeration of valid indexes into optab_table.  */
 enum optab_index

@@ -1694,7 +1694,7 @@ emit_block_move (x, y, size)
 	      if (pred != 0 && ! (*pred) (op2, mode))
 		op2 = copy_to_mode_reg (mode, op2);
 
-	      pat = GEN_FCN ((int) code) (x, y, op2, opalign);
+	      pat = GEN_FCN4 ((int) code) (x, y, op2, opalign);
 	      if (pat)
 		{
 		  emit_insn (pat);
@@ -2635,7 +2635,7 @@ clear_storage (object, size)
 		  if (pred != 0 && ! (*pred) (op1, mode))
 		    op1 = copy_to_mode_reg (mode, op1);
 
-		  pat = GEN_FCN ((int) code) (object, op1, opalign);
+		  pat = GEN_FCN3 ((int) code) (object, op1, opalign);
 		  if (pat)
 		    {
 		      emit_insn (pat);
@@ -2822,7 +2822,7 @@ emit_move_insn_1 (x, y)
 
   if (mov_optab->handlers[(int) mode].insn_code != CODE_FOR_nothing)
     return
-      emit_insn (GEN_FN2 (mov_optab->handlers[(int) mode].insn_code) (x, y));
+      emit_insn (GEN_FCN2 (mov_optab->handlers[(int) mode].insn_code) (x, y));
 
   /* Expand complex moves by moving real part and imag part, if possible.  */
   else if ((class == MODE_COMPLEX_FLOAT || class == MODE_COMPLEX_INT)
@@ -2896,17 +2896,17 @@ emit_move_insn_1 (x, y)
 	  /* Note that the real part always precedes the imag part in memory
 	     regardless of machine's endianness.  */
 #ifdef STACK_GROWS_DOWNWARD
-	  emit_insn (GEN_FCN (mov_optab->handlers[(int) submode].insn_code)
+	  emit_insn (GEN_FCN2 (mov_optab->handlers[(int) submode].insn_code)
 		     (gen_rtx_MEM (submode, XEXP (x, 0)),
 		      gen_imagpart (submode, y)));
-	  emit_insn (GEN_FCN (mov_optab->handlers[(int) submode].insn_code)
+	  emit_insn (GEN_FCN2 (mov_optab->handlers[(int) submode].insn_code)
 		     (gen_rtx_MEM (submode, XEXP (x, 0)),
 		      gen_realpart (submode, y)));
 #else
-	  emit_insn (GEN_FCN (mov_optab->handlers[(int) submode].insn_code)
+	  emit_insn (GEN_FCN2 (mov_optab->handlers[(int) submode].insn_code)
 		     (gen_rtx_MEM (submode, XEXP (x, 0)),
 		      gen_realpart (submode, y)));
-	  emit_insn (GEN_FCN (mov_optab->handlers[(int) submode].insn_code)
+	  emit_insn (GEN_FCN2 (mov_optab->handlers[(int) submode].insn_code)
 		     (gen_rtx_MEM (submode, XEXP (x, 0)),
 		      gen_imagpart (submode, y)));
 #endif
@@ -2983,9 +2983,9 @@ emit_move_insn_1 (x, y)
 		  || GET_CODE (imagpart_x) == SUBREG))
 	    emit_insn (gen_rtx_CLOBBER (VOIDmode, x));
 
-	  emit_insn (GEN_FCN (mov_optab->handlers[(int) submode].insn_code)
+	  emit_insn (GEN_FCN2 (mov_optab->handlers[(int) submode].insn_code)
 		     (realpart_x, realpart_y));
-	  emit_insn (GEN_FCN (mov_optab->handlers[(int) submode].insn_code)
+	  emit_insn (GEN_FCN2 (mov_optab->handlers[(int) submode].insn_code)
 		     (imagpart_x, imagpart_y));
 	}
 
@@ -3186,7 +3186,7 @@ emit_single_push_insn (mode, x, type)
       if (((pred = insn_data[(int) icode].operand[0].predicate)
 	   && !((*pred) (x, mode))))
 	x = force_reg (mode, x);
-      emit_insn (GEN_FCN (icode) (x));
+      emit_insn (GEN_FCN1 (icode) (x));
       return;
     }
   if (GET_MODE_SIZE (mode) == rounded_size)
@@ -3433,8 +3433,8 @@ emit_push_insn (x, mode, type, size, align, partial, reg, extra,
 		      if (pred != 0 && ! (*pred) (op2, mode))
 			op2 = copy_to_mode_reg (mode, op2);
 
-		      pat = GEN_FCN ((int) code) (target, xinner,
-						  op2, opalign);
+		      pat = GEN_FCN4 ((int) code) (target, xinner,
+						   op2, opalign);
 		      if (pat)
 			{
 			  emit_insn (pat);
@@ -9159,7 +9159,7 @@ expand_increment (exp, post, ignore)
 	  if (! (*insn_data[icode].operand[2].predicate) (op1, mode))
 	    op1 = force_reg (mode, op1);
 
-	  return enqueue_insn (op0, GEN_FCN (icode) (op0, op0, op1));
+	  return enqueue_insn (op0, GEN_FCN3 (icode) (op0, op0, op1));
 	}
       if (icode != (int) CODE_FOR_nothing && GET_CODE (op0) == MEM)
 	{
@@ -9176,7 +9176,7 @@ expand_increment (exp, post, ignore)
 	  /* The increment queue is LIFO, thus we have to `queue'
 	     the instructions in reverse order.  */
 	  enqueue_insn (op0, gen_move_insn (op0, temp));
-	  result = enqueue_insn (temp, GEN_FCN (icode) (temp, temp, op1));
+	  result = enqueue_insn (temp, GEN_FCN3 (icode) (temp, temp, op1));
 	  return result;
 	}
     }

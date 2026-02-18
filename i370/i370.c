@@ -806,7 +806,8 @@ mvs_make_float (REAL_VALUE_TYPE r)
 		
 		if (*p == '.') p++;
 
-		strcpy (++p, t);
+		p++;
+		memmove (p, t, strlen(t) + 1);
 	}
 
 	return (buf);
