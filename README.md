@@ -1,20 +1,20 @@
 # c2asm370
 
-A C cross-compiler that produces IBM System/370 HLASM assembler source from C code. Built on a stripped-down GCC 3.2.3, it runs on Linux (32-bit) and macOS (including Apple Silicon) and generates mainframe-ready assembler output.
+A C cross-compiler that produces IBM System/370 assembler source from C code. Built on a stripped-down GCC 3.2.3, it runs on Linux (32-bit) and macOS (including Apple Silicon) and generates mainframe-ready assembler output.
 
 ## Background
 
-c2asm370 is a fork of [gccmvs](https://gccmvs.sourceforge.net) by Paul Edwards. It was created by Michael Dean Rayborn (Mike Rayborn), who simplified the GCC 3.2.3 source tree to focus solely on generating HLASM assembler files from C source code.
+c2asm370 is a fork of [gccmvs](https://gccmvs.sourceforge.net) by Paul Edwards. It was created by Michael Dean Rayborn (Mike Rayborn), who simplified the GCC 3.2.3 source tree to focus solely on generating assembler files from C source code.
 
 Mike Rayborn has since retired from active development. With his agreement, [MVSLOVERS](https://github.com/mvslovers) has taken over the project to preserve and continue its development.
 
 ## What It Does
 
-c2asm370 compiles C source code into IBM System/370 HLASM assembler source files (`.s`). It does **not** produce object files — the generated assembler must be uploaded to a platform with an IBM-compatible assembler (e.g., MVS 3.8, z/OS, VM/CMS).
+c2asm370 compiles C source code into IBM System/370 assembler source files (`.s`). It does **not** produce object files — the generated assembler must be uploaded to a platform with an IBM-compatible assembler (e.g., MVS 3.8, z/OS, VM/CMS).
 
 The generated output uses:
 - **EBCDIC** character encoding
-- **HLASM** syntax with MVS calling conventions
+- **S/370 assembler** syntax with MVS calling conventions
 - **PDPCLIB** macros for function prologue/epilogue
 
 ## Building
@@ -41,7 +41,7 @@ make install        # Install to /usr/local/bin (set PREFIX to override)
 ./c2asm370 -I crent370/include -I <your include> -S myprogram.c
 ```
 
-This produces `myprogram.s` containing HLASM assembler source ready for upload to a mainframe assembler.
+This produces `myprogram.s` containing the assembler source ready for upload to a mainframe assembler.
 
 ## Project Structure
 
@@ -51,7 +51,7 @@ This produces `myprogram.s` containing HLASM assembler source ready for upload t
 | `gcc/` | Core GCC 3.2.3 compiler (C frontend, RTL, optimization passes) |
 | `libiberty/` | GNU support library |
 | `include/` | Shared headers for libiberty and GCC internals |
-| `macro/` | HLASM macro definitions used by generated output |
+| `macro/` | assembler macro definitions used by generated output |
 
 ## Credits
 
