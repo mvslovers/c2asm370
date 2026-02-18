@@ -39,7 +39,7 @@ else
   # Linux (default, 32-bit build)
   HOST_DEFINE = -DHOST_LINUX
   ARCH_FLAGS = -m32 -fno-pie
-  LINK_ARCH_FLAGS = -m32
+  LINK_ARCH_FLAGS = -m32 -no-pie
   LINK_LIBS = -lgcc
   EXTRA_CFLAGS =
 endif
