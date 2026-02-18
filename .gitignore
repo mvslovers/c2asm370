@@ -1,0 +1,16 @@
+# Build artifacts
+*.o
+*.s
+c2asm370
+
+# macOS
+.DS_Store
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# AI stuff
+CLAUDE.md

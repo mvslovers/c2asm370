@@ -1,0 +1,12 @@
+@CLIBPPA DSECT                                                                  
+PPAEYE   DS     CL4               00 Eye Catcher                                
+PPAEYE$  EQU    C'@PPA'           ...                                           
+PPAPREV  DS     A(0)              04 Previous Save Area                         
+PPANEXT  DS     A(0)              08 Next Save Area                             
+PPACRT   DS     A(0)              0C C Runtime Library Anchor (Task)            
+PPAGRT   DS     A(0)              10 C Runtime Global Anchor (AS)               
+PPASAVE  DS     A(0)              14 saved "next" from TCBFSA                   
+PPA18    DS     A(0)              18 unused                                     
+PPA1C    DS     A(0)              1C unused                                     
+         DS     0D                force double word alignment                   
+CLIBPPA  EQU    @CLIBPPA,*-@CLIBPPA                                             
