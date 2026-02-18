@@ -38,7 +38,7 @@ make install        # Install to /usr/local/bin (set PREFIX to override)
 ## Usage
 
 ```bash
-./c2asm370 -I pdpclib -S myprogram.c
+./c2asm370 -I crent370/include -I <your include> -S myprogram.c
 ```
 
 This produces `myprogram.s` containing HLASM assembler source ready for upload to a mainframe assembler.
@@ -52,7 +52,6 @@ This produces `myprogram.s` containing HLASM assembler source ready for upload t
 | `libiberty/` | GNU support library |
 | `include/` | Shared headers for libiberty and GCC internals |
 | `macro/` | HLASM macro definitions used by generated output |
-| `pdpclib/` | Public Domain Project C Library headers (target library) |
 
 ## Credits
 
