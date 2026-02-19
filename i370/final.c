@@ -3127,23 +3127,15 @@ output_asm_operand_names (rtx *operands, int *oporder, int nops)
 		}
 	}
  
-	if (len > 0) { 
-#if 1 /* experimental code */
+	if (len > 0) {
 		if (len > 64) len = 64;
 		buf[len] = 0;
-        /* the goal here is to prevent comments beyond col 71 */
-        if (get_ocnt() + len > 65) {
-            putc('\n', asm_out_file);
-            fprintf(asm_out_file, "* ==> %s", buf);
-        }
-        else {
-            fprintf(asm_out_file, " ==> %s", buf);
-        }
-#else
-		if (len > 32) len = 32;
-		buf[len] = 0;
-		fprintf(asm_out_file, " ==> %s", buf);
-#endif
+		/* Only emit the comment if it fits on the current line.
+		   Inserting a comment on a new line would break S/370
+		   assembler continuation lines (X in column 72). */
+		if (get_ocnt() + len + 5 <= 65) {
+			fprintf(asm_out_file, " ==> %s", buf);
+		}
 	}
 }
 
