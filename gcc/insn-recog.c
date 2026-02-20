@@ -355,9 +355,29 @@ recog_1 (x0, insn, pnum_clobbers)
       goto L246;
     case MULT:
       goto L271;
+    case UNSPEC:
+      goto L877;
     default:
      break;
    }
+  x1 = XEXP (x0, 0);
+  goto L793;
+
+ L877: ATTRIBUTE_UNUSED_LABEL
+  if (XINT (x1, 1) == 0 && XVECLEN (x1, 0) == 2)
+    {
+      x2 = XVECEXP (x1, 0, 0);
+      if (register_operand (x2, SImode))
+	{
+	  operands[1] = x2;
+	  x2 = XVECEXP (x1, 0, 1);
+	  if (general_operand (x2, SImode))
+	    {
+	      operands[2] = x2;
+	      return 146;
+	    }
+	}
+    }
   x1 = XEXP (x0, 0);
   goto L793;
 

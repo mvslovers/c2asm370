@@ -109,6 +109,7 @@ enum insn_code {
   CODE_FOR_modsi3 = 143,
   CODE_FOR_umodsi3 = 144,
   CODE_FOR_untyped_call = 145,
+  CODE_FOR_addsi3_logical = 146,
 CODE_FOR_nothing
 };
 

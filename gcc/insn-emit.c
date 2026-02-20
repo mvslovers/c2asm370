@@ -1503,20 +1503,41 @@ gen_adddi3 (operand0, operand1, operand2)
   rtx label = gen_label_rtx ();
   rtx op0_high = operand_subword (operands[0], 0, 1, DImode);
   rtx op0_low = gen_lowpart (SImode, operands[0]);
-	
-  emit_insn (gen_rtx_SET (VOIDmode, op0_high,
+  /* Avoid using the jump_insn pattern 38 (ALR+BC combined) entirely.
+     That pattern creates a jump_insn with a SET output, which triggers
+     ICEs: reload1.c can't do output reloads on JUMP_INSNs, and at -O0
+     reload.c can't satisfy the constraints when inputs are in memory.
+     Instead, detect carry using unsigned comparison after a regular add:
+     if (lo_result < lo_input1) then carry occurred.  This uses only
+     standard addsi3 + compare + branch patterns that reload handles.  */
+  rtx temp_hi = gen_reg_rtx (SImode);
+  rtx temp_lo = gen_reg_rtx (SImode);
+  rtx lo_op1 = gen_reg_rtx (SImode);
+
+  /* Add high words: temp_hi = op1_high + op2_high */
+  emit_insn (gen_rtx_SET (VOIDmode, temp_hi,
 		    gen_rtx_PLUS (SImode,
 			    operand_subword (operands[1], 0, 1, DImode),
 			    operand_subword (operands[2], 0, 1, DImode))));
-  emit_jump_insn (gen_rtx_PARALLEL (VOIDmode, gen_rtvec (2,
-	      gen_rtx_SET (VOIDmode, op0_low,
-		      gen_rtx_PLUS (SImode, gen_lowpart (SImode, operands[1]),
-			      gen_lowpart (SImode, operands[2]))),
-	      gen_rtx_USE (VOIDmode, gen_rtx_LABEL_REF (VOIDmode, label)))));
-  emit_insn (gen_rtx_SET (VOIDmode, op0_high,
-		    gen_rtx_PLUS (SImode, op0_high,
+  /* Save one low-word input for carry detection */
+  emit_insn (gen_rtx_SET (VOIDmode, lo_op1,
+		    gen_lowpart (SImode, operands[1])));
+  /* Add low words using Add Logical (AL/ALR) to avoid S0C8 ABEND.
+     Regular addsi3 uses A/AR which triggers Fixed-Point Overflow
+     interrupt on MVS for unsigned values crossing the signed boundary. */
+  emit_insn (gen_addsi3_logical (temp_lo, lo_op1,
+			    gen_lowpart (SImode, operands[2])));
+  /* Detect carry: if temp_lo >= lo_op1 (unsigned), no carry occurred */
+  emit_cmp_and_jump_insns (temp_lo, lo_op1, GEU, NULL_RTX,
+			   SImode, 1, label);
+  /* Carry path: increment high word */
+  emit_insn (gen_rtx_SET (VOIDmode, temp_hi,
+		    gen_rtx_PLUS (SImode, temp_hi,
 			    gen_rtx_CONST_INT (SImode, 1))));
   emit_label (label);
+  /* Store results to output */
+  emit_insn (gen_rtx_SET (VOIDmode, op0_high, temp_hi));
+  emit_insn (gen_rtx_SET (VOIDmode, op0_low, temp_lo));
   DONE;
 }
     operand0 = operands[0];
@@ -1920,6 +1941,22 @@ gen_untyped_call (operand0, operand1, operand2)
 }
 
 
+
+/* Emit an Add Logical (AL/ALR) instruction.  Unlike addsi3 which uses
+   A/AR and can trigger S0C8 Fixed-Point Overflow on MVS, this uses
+   AL/ALR which sets the condition code for carry without overflow trap.
+   Used by adddi3 for the low-word addition of unsigned 64-bit add.  */
+
+rtx
+gen_addsi3_logical (operand0, operand1, operand2)
+     rtx operand0;
+     rtx operand1;
+     rtx operand2;
+{
+  return gen_rtx_SET (VOIDmode, operand0,
+	    gen_rtx_UNSPEC (SImode,
+	      gen_rtvec (2, operand1, operand2), 0));
+}
 
 void
 add_clobbers (pattern, insn_code_number)

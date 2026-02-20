@@ -215,5 +215,6 @@ extern struct rtx_def *gen_udivsi3          PARAMS ((struct rtx_def *, struct rt
 extern struct rtx_def *gen_modsi3           PARAMS ((struct rtx_def *, struct rtx_def *, struct rtx_def *));
 extern struct rtx_def *gen_umodsi3          PARAMS ((struct rtx_def *, struct rtx_def *, struct rtx_def *));
 extern struct rtx_def *gen_untyped_call     PARAMS ((struct rtx_def *, struct rtx_def *, struct rtx_def *));
+extern struct rtx_def *gen_addsi3_logical   PARAMS ((struct rtx_def *, struct rtx_def *, struct rtx_def *));
 
 #endif /* GCC_INSN_FLAGS_H */

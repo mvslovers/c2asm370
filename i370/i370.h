@@ -1968,8 +1968,19 @@ extern int mvs_mark_alias (const char *realname);
 	  }								\
 	else								\
 	  {								\
-	    mvs_page_lit += 4;						\
-	    fprintf (FILE, "=F'%d'", INTVAL (XV));			\
+	    HOST_WIDE_INT _val = INTVAL (XV);				\
+	    if (_val != (int) _val)					\
+	      {								\
+		mvs_page_lit += 8;					\
+		fprintf (FILE, "=XL8'%08X%08X'",			\
+			(unsigned) ((unsigned HOST_WIDE_INT) _val >> 32), \
+			(unsigned) (_val & 0xFFFFFFFF));			\
+	      }								\
+	    else							\
+	      {								\
+		mvs_page_lit += 4;					\
+		fprintf (FILE, "=F'%d'", (int) _val);			\
+	      }								\
 	  }								\
 	break;								\
       case CONST_DOUBLE:						\
@@ -2295,8 +2306,19 @@ extern int mvs_mark_alias (const char *realname);
 	  }								\
 	else								\
 	  {								\
-	    mvs_page_lit += 4;						\
-	    fprintf (FILE, "=F'%d'", INTVAL (XV));			\
+	    HOST_WIDE_INT _val = INTVAL (XV);				\
+	    if (_val != (int) _val)					\
+	      {								\
+		mvs_page_lit += 8;					\
+		fprintf (FILE, "=XL8'%08X%08X'",			\
+			(unsigned) ((unsigned HOST_WIDE_INT) _val >> 32), \
+			(unsigned) (_val & 0xFFFFFFFF));			\
+	      }								\
+	    else							\
+	      {								\
+		mvs_page_lit += 4;					\
+		fprintf (FILE, "=F'%d'", (int) _val);			\
+	      }								\
 	  }								\
 	break;								\
       case CONST_DOUBLE:						\
@@ -2315,7 +2337,7 @@ extern int mvs_mark_alias (const char *realname);
 	    else							\
 	      {								\
 		mvs_page_lit += 8;					\
-		fprintf (FILE, "=yyyyXL8'%08X%08X'", 			\
+		fprintf (FILE, "=XL8'%08X%08X'", 			\
 			CONST_DOUBLE_HIGH (XV), CONST_DOUBLE_LOW (XV));	\
 	      }								\
 	  }								\

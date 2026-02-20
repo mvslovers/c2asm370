@@ -3406,6 +3406,23 @@ output_133 (operands, insn)
 }
 
 
+static const char *output_146 PARAMS ((rtx *, rtx));
+
+static const char *
+output_146 (operands, insn)
+     rtx *operands ATTRIBUTE_UNUSED;
+     rtx insn ATTRIBUTE_UNUSED;
+{
+  check_label_emit ();
+  if (REG_P (operands[2]))
+    {
+      mvs_check_page (0, 2, 0);
+      return "ALR\t%0,%2";
+    }
+  mvs_check_page (0, 4, 0);
+  return "AL\t%0,%2";
+}
+
 extern int register_operand PARAMS ((rtx, enum machine_mode));
 extern int general_operand PARAMS ((rtx, enum machine_mode));
 extern int r_or_s_operand PARAMS ((rtx, enum machine_mode));
@@ -4830,6 +4847,27 @@ static const struct insn_operand_data operand_data[] =
     0,
     "",
     VOIDmode,
+    0,
+    1
+  },
+  {
+    register_operand,
+    "=d",
+    SImode,
+    0,
+    1
+  },
+  {
+    register_operand,
+    "0",
+    SImode,
+    0,
+    1
+  },
+  {
+    general_operand,
+    "g",
+    SImode,
     0,
     1
   },
@@ -6298,6 +6336,16 @@ const struct insn_data insn_data[] =
     0,
     0,
     0
+  },
+  {
+    "addsi3_logical",
+    __extension__ (const PTR) output_146,
+    (insn_gen_fn) gen_addsi3_logical,
+    &operand_data[202],
+    3,
+    0,
+    1,
+    3
   },
 };
 

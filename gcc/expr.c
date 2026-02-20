@@ -125,7 +125,7 @@ static rtx enqueue_insn		PARAMS ((rtx, rtx));
 static unsigned HOST_WIDE_INT move_by_pieces_ninsns
 				PARAMS ((unsigned HOST_WIDE_INT,
 					 unsigned int));
-static void move_by_pieces_1	PARAMS ((rtx (*) (rtx, ...), enum machine_mode,
+static void move_by_pieces_1	PARAMS ((rtx (*) (rtx, rtx), enum machine_mode,
 					 struct move_by_pieces *));
 static rtx clear_by_pieces_1	PARAMS ((PTR, HOST_WIDE_INT,
 					 enum machine_mode));
@@ -133,7 +133,7 @@ static void clear_by_pieces	PARAMS ((rtx, unsigned HOST_WIDE_INT,
 					 unsigned int));
 static void store_by_pieces_1	PARAMS ((struct store_by_pieces *,
 					 unsigned int));
-static void store_by_pieces_2	PARAMS ((rtx (*) (rtx, ...),
+static void store_by_pieces_2	PARAMS ((rtx (*) (rtx, rtx),
 					 enum machine_mode,
 					 struct store_by_pieces *));
 static rtx get_subtarget	PARAMS ((rtx));
@@ -1495,7 +1495,7 @@ move_by_pieces (to, from, len, align)
 
       icode = mov_optab->handlers[(int) mode].insn_code;
       if (icode != CODE_FOR_nothing && align >= GET_MODE_ALIGNMENT (mode))
-	move_by_pieces_1 (GEN_FCN (icode), mode, &data);
+	move_by_pieces_1 (GEN_FCN2 (icode), mode, &data);
 
       max_size = GET_MODE_SIZE (mode);
     }
@@ -1551,7 +1551,7 @@ move_by_pieces_ninsns (l, align)
 
 static void
 move_by_pieces_1 (genfun, mode, data)
-     rtx (*genfun) PARAMS ((rtx, ...));
+     rtx (*genfun) PARAMS ((rtx, rtx));
      enum machine_mode mode;
      struct move_by_pieces *data;
 {
@@ -2516,7 +2516,7 @@ store_by_pieces_1 (data, align)
 
       icode = mov_optab->handlers[(int) mode].insn_code;
       if (icode != CODE_FOR_nothing && align >= GET_MODE_ALIGNMENT (mode))
-	store_by_pieces_2 (GEN_FCN (icode), mode, data);
+	store_by_pieces_2 (GEN_FCN2 (icode), mode, data);
 
       max_size = GET_MODE_SIZE (mode);
     }
@@ -2532,7 +2532,7 @@ store_by_pieces_1 (data, align)
 
 static void
 store_by_pieces_2 (genfun, mode, data)
-     rtx (*genfun) PARAMS ((rtx, ...));
+     rtx (*genfun) PARAMS ((rtx, rtx));
      enum machine_mode mode;
      struct store_by_pieces *data;
 {

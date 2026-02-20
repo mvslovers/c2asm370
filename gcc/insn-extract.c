@@ -265,6 +265,12 @@ insn_extract (insn)
       ro[0] = *(ro_loc[0] = &XEXP (pat, 1));
       break;
 
+    case 146:  /* addsi3_logical */
+      ro[0] = *(ro_loc[0] = &XEXP (pat, 0));
+      ro[1] = *(ro_loc[1] = &XVECEXP (XEXP (pat, 1), 0, 0));
+      ro[2] = *(ro_loc[2] = &XVECEXP (XEXP (pat, 1), 0, 1));
+      break;
+
     default:
       abort ();
     }
