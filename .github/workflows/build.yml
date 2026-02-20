@@ -1,0 +1,84 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install 32-bit build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-multilib
+
+      - name: Build c2asm370
+        run: make
+
+      - name: Run tests
+        run: ./tests/run_tests.sh
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: c2asm370-linux-x86
+          path: c2asm370
+
+  build-macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build c2asm370
+        run: make
+
+      - name: Run tests
+        run: ./tests/run_tests.sh
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: c2asm370-macos-arm64
+          path: c2asm370
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-linux, build-macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Linux binary
+        uses: actions/download-artifact@v4
+        with:
+          name: c2asm370-linux-x86
+          path: release/linux
+
+      - name: Download macOS binary
+        uses: actions/download-artifact@v4
+        with:
+          name: c2asm370-macos-arm64
+          path: release/macos
+
+      - name: Prepare release assets
+        run: |
+          chmod +x release/linux/c2asm370
+          chmod +x release/macos/c2asm370
+          cd release/linux && tar czf ../../c2asm370-linux-x86.tar.gz c2asm370 && cd ../..
+          cd release/macos && tar czf ../../c2asm370-macos-arm64.tar.gz c2asm370 && cd ../..
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: |
+            c2asm370-linux-x86.tar.gz
+            c2asm370-macos-arm64.tar.gz
