@@ -10,6 +10,9 @@ on:
 jobs:
   build-linux:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        gcc: [default, 14]
     steps:
       - uses: actions/checkout@v4
 
@@ -18,6 +21,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc-multilib
 
+      - name: Install GCC ${{ matrix.gcc }}
+        if: matrix.gcc != 'default'
+        run: |
+          sudo apt-get install -y gcc-${{ matrix.gcc }} gcc-${{ matrix.gcc }}-multilib
+          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{ matrix.gcc }} 100
+
+      - name: Show GCC version
+        run: gcc --version
+
       - name: Build c2asm370
         run: make
 
@@ -25,6 +37,7 @@ jobs:
         run: ./tests/run_tests.sh
 
       - name: Upload binary
+        if: matrix.gcc == 'default'
         uses: actions/upload-artifact@v4
         with:
           name: c2asm370-linux-x86

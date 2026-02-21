@@ -45,7 +45,7 @@ else
 endif
 
 DEFINES = -DIN_GCC -DHAVE_CONFIG_H -DPUREISO -DTARGET_MVS $(HOST_DEFINE) -DMVSGCC_CROSS
-CFLAGS = -std=c99 -fno-stack-protector -fno-builtin -fexceptions $(ARCH_FLAGS) -O1 $(EXTRA_CFLAGS) $(INCLUDES) $(DEFINES)
+CFLAGS = -std=gnu99 -Wno-error=implicit-function-declaration -Wno-error=int-conversion -Wno-error=incompatible-pointer-types -fno-stack-protector -fno-builtin -fexceptions $(ARCH_FLAGS) -O1 $(EXTRA_CFLAGS) $(INCLUDES) $(DEFINES)
 
 # sources for I370 (370 assembler source creation)
 I370_SRCS= \
