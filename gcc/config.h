@@ -302,11 +302,7 @@ typedef union tree_node *tree;
 #undef HAVE_STRDUP
 
 /* Define if you have the strsignal function.  */
-#if defined(HOST_MACOS)
 #define HAVE_STRSIGNAL 1
-#else
-#undef HAVE_STRSIGNAL
-#endif
 
 /* Define if you have the strtoul function.  */
 #define HAVE_STRTOUL 1
