@@ -35,8 +35,18 @@ ifeq ($(UNAME_S),Darwin)
   LINK_ARCH_FLAGS =
   LINK_LIBS =
   EXTRA_CFLAGS = -fcommon -fgnu89-inline
+else ifneq (,$(filter aarch64 arm64,$(UNAME_M)))
+  # Linux on ARM64 — native 64-bit build.
+  # There is no usable 32-bit multilib on ARM64, so we do not use -m32.
+  # The 64-bit host configuration is selected automatically via __LP64__
+  # in gcc/config.h and gcc/auto-host.h (same path as the macOS build).
+  HOST_DEFINE = -DHOST_LINUX
+  ARCH_FLAGS =
+  LINK_ARCH_FLAGS =
+  LINK_LIBS = -lgcc
+  EXTRA_CFLAGS =
 else
-  # Linux (default, 32-bit build)
+  # Linux on x86 (default, 32-bit build)
   HOST_DEFINE = -DHOST_LINUX
   ARCH_FLAGS = -m32 -fno-pie
   LINK_ARCH_FLAGS = -m32 -no-pie
