@@ -16,15 +16,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install 32-bit build dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-multilib
-
       - name: Install GCC ${{ matrix.gcc }}
         if: matrix.gcc != 'default'
         run: |
-          sudo apt-get install -y gcc-${{ matrix.gcc }} gcc-${{ matrix.gcc }}-multilib
+          sudo apt-get update
+          sudo apt-get install -y gcc-${{ matrix.gcc }}
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-${{ matrix.gcc }} 100
 
       - name: Show GCC version
@@ -40,7 +36,7 @@ jobs:
         if: matrix.gcc == 'default'
         uses: actions/upload-artifact@v4
         with:
-          name: c2asm370-linux-x86
+          name: c2asm370-linux-amd64
           path: c2asm370
 
   build-linux-arm64:
@@ -89,10 +85,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download Linux x86 binary
+      - name: Download Linux amd64 binary
         uses: actions/download-artifact@v4
         with:
-          name: c2asm370-linux-x86
+          name: c2asm370-linux-amd64
           path: release/linux
 
       - name: Download Linux arm64 binary
@@ -112,7 +108,7 @@ jobs:
           chmod +x release/linux/c2asm370
           chmod +x release/linux-arm64/c2asm370
           chmod +x release/macos/c2asm370
-          cd release/linux && tar czf ../../c2asm370-linux-x86.tar.gz c2asm370 && cd ../..
+          cd release/linux && tar czf ../../c2asm370-linux-amd64.tar.gz c2asm370 && cd ../..
           cd release/linux-arm64 && tar czf ../../c2asm370-linux-arm64.tar.gz c2asm370 && cd ../..
           cd release/macos && tar czf ../../c2asm370-macos-arm64.tar.gz c2asm370 && cd ../..
 
@@ -121,6 +117,6 @@ jobs:
         with:
           generate_release_notes: true
           files: |
-            c2asm370-linux-x86.tar.gz
+            c2asm370-linux-amd64.tar.gz
             c2asm370-linux-arm64.tar.gz
             c2asm370-macos-arm64.tar.gz

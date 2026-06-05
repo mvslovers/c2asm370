@@ -1,6 +1,6 @@
 # 2023-12-29: This Makefile creates the "c2asm370" executable on and for Linux.
-#             The resulting "c2asm370" is a 32 bit executable program that *should*
-#             run on 32 or 64 bit Linux machines.
+#             The resulting "c2asm370" is a native 64-bit executable
+#             (x86-64 / aarch64). macOS (Apple Silicon) is also supported.
 #
 #             When executing "c2asm370" you must use the '-S' option to create an
 #             assembler source file: ./c2asm370 -I pdpclib -S test.c
@@ -26,7 +26,6 @@ CC = gcc
 
 # Platform detection
 UNAME_S := $(shell uname -s)
-UNAME_M := $(shell uname -m)
 
 ifeq ($(UNAME_S),Darwin)
   # macOS (Apple Silicon or Intel)
@@ -35,21 +34,13 @@ ifeq ($(UNAME_S),Darwin)
   LINK_ARCH_FLAGS =
   LINK_LIBS =
   EXTRA_CFLAGS = -fcommon -fgnu89-inline
-else ifneq (,$(filter aarch64 arm64,$(UNAME_M)))
-  # Linux on ARM64 — native 64-bit build.
-  # There is no usable 32-bit multilib on ARM64, so we do not use -m32.
+else
+  # Linux — native 64-bit build (x86-64 / aarch64).
   # The 64-bit host configuration is selected automatically via __LP64__
   # in gcc/config.h and gcc/auto-host.h (same path as the macOS build).
   HOST_DEFINE = -DHOST_LINUX
   ARCH_FLAGS =
   LINK_ARCH_FLAGS =
-  LINK_LIBS = -lgcc
-  EXTRA_CFLAGS =
-else
-  # Linux on x86 (default, 32-bit build)
-  HOST_DEFINE = -DHOST_LINUX
-  ARCH_FLAGS = -m32 -fno-pie
-  LINK_ARCH_FLAGS = -m32 -no-pie
   LINK_LIBS = -lgcc
   EXTRA_CFLAGS =
 endif
