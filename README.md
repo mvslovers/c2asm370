@@ -1,6 +1,6 @@
 # c2asm370
 
-A C cross-compiler that produces IBM System/370 assembler source from C code. Built on a stripped-down GCC 3.2.3, it runs on Linux (x86 32-bit and ARM64) and macOS (including Apple Silicon) and generates mainframe-ready assembler output.
+A C cross-compiler that produces IBM System/370 assembler source from C code. Built on a stripped-down GCC 3.2.3, it runs as a native 64-bit binary on Linux (x86-64 and ARM64) and macOS (Apple Silicon) and generates mainframe-ready assembler output.
 
 ## Background
 
@@ -21,8 +21,7 @@ The generated output uses:
 
 ### Requirements
 
-- **Linux (x86):** GCC with 32-bit support (`gcc-multilib`)
-- **Linux (ARM64):** GCC (native 64-bit build, no multilib needed)
+- **Linux (x86-64 / ARM64):** GCC (native 64-bit build, no multilib needed)
 - **macOS:** Xcode Command Line Tools (Apple Silicon and Intel supported)
 - GNU Make
 
