@@ -43,6 +43,26 @@ jobs:
           name: c2asm370-linux-x86
           path: c2asm370
 
+  build-linux-arm64:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show GCC version
+        run: gcc --version
+
+      - name: Build c2asm370
+        run: make
+
+      - name: Run tests
+        run: ./tests/run_tests.sh
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: c2asm370-linux-arm64
+          path: c2asm370
+
   build-macos:
     runs-on: macos-14
     steps:
@@ -62,18 +82,24 @@ jobs:
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
-    needs: [build-linux, build-macos]
+    needs: [build-linux, build-linux-arm64, build-macos]
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download Linux binary
+      - name: Download Linux x86 binary
         uses: actions/download-artifact@v4
         with:
           name: c2asm370-linux-x86
           path: release/linux
+
+      - name: Download Linux arm64 binary
+        uses: actions/download-artifact@v4
+        with:
+          name: c2asm370-linux-arm64
+          path: release/linux-arm64
 
       - name: Download macOS binary
         uses: actions/download-artifact@v4
@@ -84,8 +110,10 @@ jobs:
       - name: Prepare release assets
         run: |
           chmod +x release/linux/c2asm370
+          chmod +x release/linux-arm64/c2asm370
           chmod +x release/macos/c2asm370
           cd release/linux && tar czf ../../c2asm370-linux-x86.tar.gz c2asm370 && cd ../..
+          cd release/linux-arm64 && tar czf ../../c2asm370-linux-arm64.tar.gz c2asm370 && cd ../..
           cd release/macos && tar czf ../../c2asm370-macos-arm64.tar.gz c2asm370 && cd ../..
 
       - name: Create GitHub Release
@@ -94,4 +122,5 @@ jobs:
           generate_release_notes: true
           files: |
             c2asm370-linux-x86.tar.gz
+            c2asm370-linux-arm64.tar.gz
             c2asm370-macos-arm64.tar.gz

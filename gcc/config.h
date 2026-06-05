@@ -541,7 +541,14 @@ typedef union tree_node *tree;
 #define HAVE_DECL_ATOL 1
 
 /* Define to 1 if we found this declaration otherwise define to 0. */
+/* On 64-bit (LP64) hosts the system header declares sbrk() as taking an
+   intptr_t (long), which conflicts with the fallback prototype in system.h
+   that uses int.  Use the system declaration there. */
+#if defined(__LP64__)
+#define HAVE_DECL_SBRK 1
+#else
 #define HAVE_DECL_SBRK 0
+#endif
 
 /* Define to 1 if we found this declaration otherwise define to 0. */
 #define HAVE_DECL_ABORT 1
